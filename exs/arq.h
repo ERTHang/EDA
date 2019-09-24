@@ -16,7 +16,7 @@ typedef struct Par {
 } Par;
 
 typedef struct Nodo {
-    Par *pares;
+    Par par;
     Nodo *proximo;
     Nodo *anterior;
 } Nodo;
@@ -30,7 +30,7 @@ typedef struct Descritor {
 void criar(Descritor *);
 void destruir(Descritor *);
 void inserir(Nodo *, Descritor *);
-void remover(size_t, Descritor *);
+void remover(Nodo *, Descritor *);
 void busca(Nodo *, Descritor *, size_t);
 
 
