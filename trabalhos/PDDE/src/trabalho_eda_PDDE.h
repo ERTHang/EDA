@@ -21,7 +21,7 @@ void adiciona_linha(DescritorMatriz *);
 void print_matriz(DescritorMatriz);
 int scanf_file(FILE *, const char *, char *);
 
-void object_size(DescritorMatriz *, size_t , size_t , size_t * );
+void object_size(DescritorMatriz *, size_t , size_t , size_t *, size_t);
 void find_biggest_object(DescritorMatriz *);
 
 

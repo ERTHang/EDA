@@ -2,10 +2,13 @@
 #define _pilha_DDE_h
 
 #include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 typedef struct Coordenadas Coordenadas;
 typedef struct Nodo Nodo;
-typedef struct Descritor Descritor;
+typedef struct DescritorPilha DescritorPilha;
 
 struct Coordenadas {
     size_t posicao_i;
@@ -18,8 +21,12 @@ struct Nodo {
     Nodo *anterior;
 };
 
-struct Descritor {
+struct DescritorPilha {
     Nodo *topo;
 };
+
+void inicializar_pilha(DescritorPilha **);
+void append_pilha(DescritorPilha *, Coordenadas *);
+void pop_pilha(DescritorPilha *, Coordenadas *);
 
 #endif
