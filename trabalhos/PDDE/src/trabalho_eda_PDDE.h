@@ -19,6 +19,10 @@ void inicializar_descritor_matriz(DescritorMatriz *);
 void adiciona_matriz(DescritorMatriz *, matrix_type);
 void adiciona_linha(DescritorMatriz *);
 void print_matriz(DescritorMatriz);
-int scanf_file(FILE *, const char *, char *) ;
+int scanf_file(FILE *, const char *, char *);
+
+void object_size(DescritorMatriz *, size_t , size_t , size_t * );
+void find_biggest_object(DescritorMatriz *);
+
 
 #endif

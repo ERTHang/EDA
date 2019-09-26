@@ -20,6 +20,7 @@ int main() {
     }
     fclose(texto);
     print_matriz(descritor_matriz);
+    find_biggest_object(&descritor_matriz);
     return 0;
 }
 
@@ -54,6 +55,39 @@ void adiciona_linha(DescritorMatriz *descritor_matriz) {
     } else {
         descritor_matriz->matriz = (matrix_type **)realloc(descritor_matriz->matriz, sizeof(matrix_type *) * ++(descritor_matriz->linha));
         descritor_matriz->coluna = 0;
+    }
+}
+
+void find_biggest_object(DescritorMatriz *descritor_matriz) {
+    size_t aux;
+    size_t biggest_size = 0;
+    for (int i = 0; i < descritor_matriz->linha; i++) {
+        for (int j = 0; j < descritor_matriz->tamanho_linha; j++) {
+            if (*(*(descritor_matriz->matriz + i) + j) == 1) {
+                aux = 0;
+                object_size(descritor_matriz, i, j, &aux);
+                printf("Objeto encontrado tem tamanho: %zu\n", aux);
+                if (aux > biggest_size) {
+                    biggest_size = aux;
+                }
+            }
+        }
+    }
+    printf("Maior Objeto: %zu\n", biggest_size);
+}
+
+void object_size(DescritorMatriz *descritor_matriz, size_t x, size_t y, size_t *size) {
+    if (*(*(descritor_matriz->matriz + x) + y) == 1) {
+        *(*(descritor_matriz->matriz + x) + y) = -1;
+        (*size)++;
+        if (y + 1 < descritor_matriz->tamanho_linha)
+            object_size(descritor_matriz, x, y + 1, size);
+        if (x + 1 < descritor_matriz->linha)
+            object_size(descritor_matriz, x + 1, y, size);
+        if (y > 0)
+            object_size(descritor_matriz, x, y - 1, size);
+        if (x > 0)
+            object_size(descritor_matriz, x - 1, y, size);
     }
 }
 
