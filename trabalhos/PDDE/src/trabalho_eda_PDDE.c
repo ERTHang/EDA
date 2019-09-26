@@ -1,12 +1,16 @@
+
 #include "trabalho_eda_PDDE.h"
 
 int main() {
-    FILE *texto = fopen("dados/entrada.txt", "r");
+    FILE *arquivo_saida;
+    FILE *arquivo_entrada;
+    arquivo_entrada = fopen("dados/entrada.txt", "r");
     DescritorMatriz descritor_matriz;
+    size_t label = 0;
     inicializar_descritor_matriz(&descritor_matriz);
     while (1) {
         char character;
-        if (scanf_file(texto, "%c", &character) == EOF) {
+        if (scanf_file(arquivo_entrada, "%c", &character) == EOF) {
             break;
         }
         if (character == '\n') {
@@ -15,12 +19,16 @@ int main() {
                 printf("Limite Linha: %zu\n", descritor_matriz.tamanho_linha);
             }
         } else {
-            adiciona_matriz(&descritor_matriz, (matrix_type)(character - '0'));
+            adiciona_matriz(&descritor_matriz, (size_t)(character - '0'));
         }
     }
-    fclose(texto);
+    fclose(arquivo_entrada);
     print_matriz(descritor_matriz);
-    find_biggest_object(&descritor_matriz);
+    find_biggest_object(&descritor_matriz, &label);
+    if (label) {
+        arquivo_saida = fopen("dados/saida.txt", "w+");
+        write_object_to_file(arquivo_saida, descritor_matriz, label);
+    }
     return 0;
 }
 
@@ -35,30 +43,30 @@ void inicializar_descritor_matriz(DescritorMatriz *desc) {
     desc->matriz = NULL;
 }
 
-void adiciona_matriz(DescritorMatriz *descritor_matriz, matrix_type valor) {
+void adiciona_matriz(DescritorMatriz *descritor_matriz, size_t valor) {
     if (descritor_matriz->linha == 0 || descritor_matriz->coluna == descritor_matriz->tamanho_linha) {
         adiciona_linha(descritor_matriz);
     }
     if (descritor_matriz->coluna == 0) {
-        *(descritor_matriz->matriz + descritor_matriz->linha - 1) = (matrix_type *)malloc(sizeof(matrix_type));
+        *(descritor_matriz->matriz + descritor_matriz->linha - 1) = (size_t *)malloc(sizeof(size_t));
         ++(descritor_matriz->coluna);
     } else {
-        *(descritor_matriz->matriz + descritor_matriz->linha - 1) = (matrix_type *)realloc(*(descritor_matriz->matriz + descritor_matriz->linha - 1), sizeof(matrix_type) * ++(descritor_matriz->coluna));
+        *(descritor_matriz->matriz + descritor_matriz->linha - 1) = (size_t *)realloc(*(descritor_matriz->matriz + descritor_matriz->linha - 1), sizeof(size_t) * ++(descritor_matriz->coluna));
     }
     *(*((descritor_matriz->matriz) + (descritor_matriz->linha - 1)) + (descritor_matriz->coluna - 1)) = valor;
 }
 
 void adiciona_linha(DescritorMatriz *descritor_matriz) {
     if (descritor_matriz->linha == 0) {
-        descritor_matriz->matriz = (matrix_type **)malloc(sizeof(matrix_type *));
+        descritor_matriz->matriz = (size_t **)malloc(sizeof(size_t *));
         ++(descritor_matriz->linha);
     } else {
-        descritor_matriz->matriz = (matrix_type **)realloc(descritor_matriz->matriz, sizeof(matrix_type *) * ++(descritor_matriz->linha));
+        descritor_matriz->matriz = (size_t **)realloc(descritor_matriz->matriz, sizeof(size_t *) * ++(descritor_matriz->linha));
         descritor_matriz->coluna = 0;
     }
 }
 
-void find_biggest_object(DescritorMatriz *descritor_matriz) {
+void find_biggest_object(DescritorMatriz *descritor_matriz, size_t *label) {
     size_t aux;
     size_t biggest_size = 0;
     size_t biggest_label = 0;
@@ -72,11 +80,12 @@ void find_biggest_object(DescritorMatriz *descritor_matriz) {
                 printf("Objeto encontrado tem tamanho: %zu\n", aux);
                 if (aux > biggest_size) {
                     biggest_size = aux;
-                    biggest_label = next_obj_label - 1;
+                    biggest_label = next_obj_label;
                 }
             }
         }
     }
+    *label = biggest_label;
     printf("Maior Objeto tem tamanho: %zu e label: %zu\n", biggest_size, biggest_label);
 }
 
@@ -92,7 +101,7 @@ void object_size(DescritorMatriz *descritor_matriz, size_t x, size_t y, size_t *
         coordenadas_atuais->posicao_j = y;
         append_pilha(descritor_pilha, coordenadas_atuais);
         while (1) {
-            matrix_type checou = 0;
+            size_t checou = 0;
             if (coordenadas_atuais->posicao_j + 1 < descritor_matriz->tamanho_linha && !checou) {
                 if (*(*(descritor_matriz->matriz + coordenadas_atuais->posicao_i) + coordenadas_atuais->posicao_j + 1) == 1) {
                     coordenadas_atuais->posicao_j++;
@@ -118,7 +127,7 @@ void object_size(DescritorMatriz *descritor_matriz, size_t x, size_t y, size_t *
                 }
             }
             if (!checou) {
-                pop_pilha(descritor_pilha, coordenadas_atuais);
+                pop_pilha(descritor_pilha, &coordenadas_atuais);
                 if (coordenadas_atuais == NULL) {
                     break;
                 }
@@ -134,8 +143,17 @@ void object_size(DescritorMatriz *descritor_matriz, size_t x, size_t y, size_t *
 void print_matriz(DescritorMatriz descritor_matriz) {
     for (size_t i = 0; i < descritor_matriz.linha; i++) {
         for (size_t j = 0; j < descritor_matriz.coluna; j++) {
-            printf("%hu", *(*(descritor_matriz.matriz + i) + j));
+            printf("%zu", *(*(descritor_matriz.matriz + i) + j));
         }
         printf("\n");
+    }
+}
+
+void write_object_to_file(FILE *file, DescritorMatriz descritor_matriz, size_t label) {
+    for (size_t i = 0; i < descritor_matriz.linha; i++) {
+        for (size_t j = 0; j < descritor_matriz.tamanho_linha; j++) {
+            fprintf(file, "%d", *(*(descritor_matriz.matriz + i) + j) == label ? 1 : 0);
+        }
+        fprintf(file, "\n");
     }
 }

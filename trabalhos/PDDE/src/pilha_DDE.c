@@ -1,4 +1,6 @@
+
 #include "pilha_DDE.h"
+
 
 void inicializar_pilha(DescritorPilha** descritor_pilha) {
     (*descritor_pilha) = (DescritorPilha*)malloc(sizeof(DescritorPilha));
@@ -17,15 +19,15 @@ void append_pilha(DescritorPilha* descritor_pilha, Coordenadas* coordenadas) {
     descritor_pilha->topo = nodo;
     printf("Coordenadas %zu %zu adicionadas\n", descritor_pilha->topo->coordenadas.posicao_i, descritor_pilha->topo->coordenadas.posicao_j);
 }
-void pop_pilha(DescritorPilha* descritor_pilha, Coordenadas* coordenadas) {
-    if(descritor_pilha->topo == NULL){
-        coordenadas = NULL;
+void pop_pilha(DescritorPilha* descritor_pilha, Coordenadas** coordenadas) {
+    if (descritor_pilha->topo == NULL) {
+        *coordenadas = NULL;
         return;
     }
     Nodo* nodo;
-    memcpy(coordenadas, &(descritor_pilha->topo->coordenadas), sizeof(Coordenadas));
+    memcpy(*coordenadas, &(descritor_pilha->topo->coordenadas), sizeof(Coordenadas));
     nodo = descritor_pilha->topo;
     descritor_pilha->topo = nodo->anterior;
-    printf("Coordenadas %zu %zu adicionadas\n", coordenadas->posicao_i, coordenadas->posicao_j);
+    printf("Coordenadas %zu %zu removidas\n", (*coordenadas)->posicao_i, (*coordenadas)->posicao_j);
     free(nodo);
 }
