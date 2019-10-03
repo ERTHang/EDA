@@ -1,4 +1,3 @@
-
 #include "trabalho_eda_PDDE.h"
 
 int main() {
@@ -10,7 +9,7 @@ int main() {
     inicializar_descritor_matriz(&descritor_matriz);
     while (1) {
         char character;
-        if (scanf_file(arquivo_entrada, "%c", &character) == EOF) {
+        if (fscanf(arquivo_entrada, "%c", &character) == EOF) {
             break;
         }
         if (character == '\n') {
@@ -23,17 +22,14 @@ int main() {
         }
     }
     fclose(arquivo_entrada);
-    print_matriz(descritor_matriz);
+    wrap_with_zeros(&descritor_matriz);
+    print_matriz_desc(descritor_matriz);
     find_biggest_object(&descritor_matriz, &label);
     if (label) {
         arquivo_saida = fopen("dados/saida.txt", "w+");
         write_object_to_file(arquivo_saida, descritor_matriz, label);
     }
     return 0;
-}
-
-int scanf_file(FILE *file, const char *format, char *character) {
-    return fscanf(file, format, character);
 }
 
 void inicializar_descritor_matriz(DescritorMatriz *desc) {
@@ -101,46 +97,35 @@ void object_size(DescritorMatriz *descritor_matriz, size_t x, size_t y, size_t *
         coordenadas_atuais->posicao_j = y;
         append_pilha(descritor_pilha, coordenadas_atuais);
         while (1) {
-            size_t checou = 0;
-            if (coordenadas_atuais->posicao_j + 1 < descritor_matriz->tamanho_linha && !checou) {
-                if (*(*(descritor_matriz->matriz + coordenadas_atuais->posicao_i) + coordenadas_atuais->posicao_j + 1) == 1) {
-                    coordenadas_atuais->posicao_j++;
-                    checou = 1;
-                }
-            }
-            if (coordenadas_atuais->posicao_i + 1 < descritor_matriz->linha && !checou) {
-                if (*(*(descritor_matriz->matriz + coordenadas_atuais->posicao_i + 1) + coordenadas_atuais->posicao_j) == 1) {
-                    coordenadas_atuais->posicao_i++;
-                    checou = 1;
-                }
-            }
-            if (coordenadas_atuais->posicao_j > 0 && !checou) {
-                if (*(*(descritor_matriz->matriz + coordenadas_atuais->posicao_i) + coordenadas_atuais->posicao_j - 1) == 1) {
-                    coordenadas_atuais->posicao_j--;
-                    checou = 1;
-                }
-            }
-            if (coordenadas_atuais->posicao_i > 0 && !checou) {
-                if (*(*(descritor_matriz->matriz + coordenadas_atuais->posicao_i - 1) + coordenadas_atuais->posicao_j) == 1) {
-                    coordenadas_atuais->posicao_i--;
-                    checou = 1;
-                }
-            }
-            if (!checou) {
+            if (*(*(descritor_matriz->matriz + coordenadas_atuais->posicao_i) + coordenadas_atuais->posicao_j + 1) == 1) {
+                coordenadas_atuais->posicao_j++;
+                marcar_matriz_e_caminho(descritor_pilha, descritor_matriz, coordenadas_atuais, label, size);
+            } else if (*(*(descritor_matriz->matriz + coordenadas_atuais->posicao_i + 1) + coordenadas_atuais->posicao_j) == 1) {
+                coordenadas_atuais->posicao_i++;
+                marcar_matriz_e_caminho(descritor_pilha, descritor_matriz, coordenadas_atuais, label, size);
+            } else if (*(*(descritor_matriz->matriz + coordenadas_atuais->posicao_i) + coordenadas_atuais->posicao_j - 1) == 1) {
+                coordenadas_atuais->posicao_j--;
+                marcar_matriz_e_caminho(descritor_pilha, descritor_matriz, coordenadas_atuais, label, size);
+            } else if (*(*(descritor_matriz->matriz + coordenadas_atuais->posicao_i - 1) + coordenadas_atuais->posicao_j) == 1) {
+                coordenadas_atuais->posicao_i--;
+                marcar_matriz_e_caminho(descritor_pilha, descritor_matriz, coordenadas_atuais, label, size);
+            } else {
                 pop_pilha(descritor_pilha, &coordenadas_atuais);
                 if (coordenadas_atuais == NULL) {
                     break;
                 }
-            } else {
-                *(*(descritor_matriz->matriz + coordenadas_atuais->posicao_i) + coordenadas_atuais->posicao_j) = label;
-                (*size)++;
-                append_pilha(descritor_pilha, coordenadas_atuais);
             }
         }
     }
 }
 
-void print_matriz(DescritorMatriz descritor_matriz) {
+void marcar_matriz_e_caminho(DescritorPilha *descritor_pilha, DescritorMatriz *descritor_matriz, Coordenadas *coordenadas_atuais, size_t label, size_t *size) {
+    *(*(descritor_matriz->matriz + coordenadas_atuais->posicao_i) + coordenadas_atuais->posicao_j) = label;
+    (*size)++;
+    append_pilha(descritor_pilha, coordenadas_atuais);
+}
+
+void print_matriz_desc(DescritorMatriz descritor_matriz) {
     for (size_t i = 0; i < descritor_matriz.linha; i++) {
         for (size_t j = 0; j < descritor_matriz.coluna; j++) {
             printf("%zu", *(*(descritor_matriz.matriz + i) + j));
@@ -149,11 +134,36 @@ void print_matriz(DescritorMatriz descritor_matriz) {
     }
 }
 
+void print_matriz(size_t **matriz, size_t linhas, size_t colunas) {
+    for (size_t i = 0; i < linhas; i++) {
+        for (size_t j = 0; j < colunas; j++) {
+            printf("%zu", *(*(matriz + i) + j));
+        }
+        printf("\n");
+    }
+}
+
 void write_object_to_file(FILE *file, DescritorMatriz descritor_matriz, size_t label) {
-    for (size_t i = 0; i < descritor_matriz.linha; i++) {
-        for (size_t j = 0; j < descritor_matriz.tamanho_linha; j++) {
+    // Percorre a matriz normatizada ao wrap
+    for (size_t i = 1; i <= descritor_matriz.linha; i++) {
+        for (size_t j = 1; j <= descritor_matriz.tamanho_linha; j++) {
             fprintf(file, "%d", *(*(descritor_matriz.matriz + i) + j) == label ? 1 : 0);
         }
         fprintf(file, "\n");
     }
+}
+
+void wrap_with_zeros(DescritorMatriz *descritor_matriz) {
+    size_t **matriz_aux = NULL;
+    size_t i, j;
+    matriz_aux = (size_t **)malloc(sizeof(size_t *) * (descritor_matriz->linha + 2));
+    *matriz_aux = (size_t *)calloc(descritor_matriz->tamanho_linha + 2, sizeof(size_t));
+    for (i = 1; i < descritor_matriz->linha + 1; i++) {
+        *(matriz_aux + i) = (size_t *)calloc(descritor_matriz->tamanho_linha + 2, sizeof(size_t));
+        for (j = 1; j <= descritor_matriz->tamanho_linha; j++) {
+            *(*(matriz_aux + i) + j) = *(*(descritor_matriz->matriz + i - 1) + j - 1);
+        }
+    }
+    *(matriz_aux + i) = (size_t *)calloc(descritor_matriz->tamanho_linha + 2, sizeof(size_t));
+    memcpy(&(descritor_matriz->matriz), &matriz_aux, sizeof(size_t **));
 }

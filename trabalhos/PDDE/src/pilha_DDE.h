@@ -28,5 +28,6 @@ struct DescritorPilha {
 void inicializar_pilha(DescritorPilha **);
 void append_pilha(DescritorPilha *, Coordenadas *);
 void pop_pilha(DescritorPilha *, Coordenadas **);
+void busca_topo(DescritorPilha *, Coordenadas **);
 
 #endif

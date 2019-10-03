@@ -1,6 +1,4 @@
-
 #include "pilha_DDE.h"
-
 
 void inicializar_pilha(DescritorPilha** descritor_pilha) {
     (*descritor_pilha) = (DescritorPilha*)malloc(sizeof(DescritorPilha));
@@ -31,3 +29,13 @@ void pop_pilha(DescritorPilha* descritor_pilha, Coordenadas** coordenadas) {
     printf("Coordenadas %zu %zu removidas\n", (*coordenadas)->posicao_i, (*coordenadas)->posicao_j);
     free(nodo);
 }
+
+void busca_topo(DescritorPilha* descritor_pilha, Coordenadas** coordenadas) {
+    if (descritor_pilha->topo == NULL) {
+        *coordenadas = NULL;
+        return;
+    }
+    memcpy(*coordenadas, &(descritor_pilha->topo->coordenadas), sizeof(Coordenadas));
+    printf("Coordenadas %zu %zu armazenadas\n", (*coordenadas)->posicao_i, (*coordenadas)->posicao_j);
+}
+
