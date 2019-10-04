@@ -29,5 +29,7 @@ void inicializar_pilha(DescritorPilha **);
 void append_pilha(DescritorPilha *, Coordenadas *);
 void pop_pilha(DescritorPilha *, Coordenadas **);
 void busca_topo(DescritorPilha *, Coordenadas **);
+// void clear_pilha(DescritorPilha*);
+// void free_pilha(DescritorPilha*);
 
 #endif
