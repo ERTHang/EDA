@@ -1,12 +1,20 @@
 #include "pilha_DDE.h"
 
 void inicializar_pilha(DescritorPilha** descritor_pilha) {
-    (*descritor_pilha) = (DescritorPilha*)malloc(sizeof(DescritorPilha));
+    *descritor_pilha = (DescritorPilha*)malloc(sizeof(DescritorPilha));
+    if (*descritor_pilha == NULL) {
+        fprintf(stderr, "Erro ao alocar descritor Pilha\n");
+        exit(EXIT_FAILURE);
+    }
     (*descritor_pilha)->topo = NULL;
 }
 void append_pilha(DescritorPilha* descritor_pilha, Coordenadas* coordenadas) {
     Nodo* nodo;
     nodo = (Nodo*)malloc(sizeof(Nodo));
+    if(nodo == NULL){
+        fprintf(stderr, "Erro ao alocar descritor Pilha\n");
+        exit(EXIT_FAILURE);
+    }
     nodo->anterior = descritor_pilha->topo;
     nodo->proximo = NULL;
     memcpy(&(nodo->coordenadas), coordenadas, sizeof(Coordenadas));
