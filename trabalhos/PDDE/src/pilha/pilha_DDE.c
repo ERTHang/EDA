@@ -21,10 +21,10 @@ void pop_pilha(DescritorPilha* descritor_pilha, Coordenadas** coordenadas) {
         return;
     }
     Nodo* nodo;
+    nodo = descritor_pilha->topo->anterior;
     memcpy(*coordenadas, &(descritor_pilha->topo->coordenadas), sizeof(Coordenadas));
-    nodo = descritor_pilha->topo;
-    descritor_pilha->topo = nodo->anterior;
-    free(nodo);
+    free(descritor_pilha->topo);
+    descritor_pilha->topo = nodo;
 }
 
 void busca_topo(DescritorPilha* descritor_pilha, Coordenadas** coordenadas) {
@@ -33,4 +33,23 @@ void busca_topo(DescritorPilha* descritor_pilha, Coordenadas** coordenadas) {
         return;
     }
     memcpy(*coordenadas, &(descritor_pilha->topo->coordenadas), sizeof(Coordenadas));
+}
+
+void teset_pilha(DescritorPilha * descritor_pilha) {
+    struct Nodo *aux = NULL;
+    if (descritor_pilha->topo != NULL) {
+        aux = descritor_pilha->topo->anterior;
+        while (aux != NULL) {
+            free(descritor_pilha->topo);
+            descritor_pilha->topo = aux;
+            aux = aux->anterior;
+        }
+        free(descritor_pilha->topo);
+        descritor_pilha->topo = NULL;
+    }
+}
+
+void free_pilha(DescritorPilha * descritor_pilha) {
+    clear_pilha(descritor_pilha);
+    free(descritor_pilha);
 }
