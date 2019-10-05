@@ -35,7 +35,7 @@ void busca_topo(DescritorPilha* descritor_pilha, Coordenadas** coordenadas) {
     memcpy(*coordenadas, &(descritor_pilha->topo->coordenadas), sizeof(Coordenadas));
 }
 
-void teset_pilha(DescritorPilha * descritor_pilha) {
+void reset_pilha(DescritorPilha * descritor_pilha) {
     struct Nodo *aux = NULL;
     if (descritor_pilha->topo != NULL) {
         aux = descritor_pilha->topo->anterior;
@@ -50,6 +50,6 @@ void teset_pilha(DescritorPilha * descritor_pilha) {
 }
 
 void free_pilha(DescritorPilha * descritor_pilha) {
-    clear_pilha(descritor_pilha);
+    reset_pilha(descritor_pilha);
     free(descritor_pilha);
 }
