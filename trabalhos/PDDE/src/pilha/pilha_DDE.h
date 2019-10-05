@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "../mem_allocation/mem_allocation.h"
 
 typedef struct Coordenadas Coordenadas;
 typedef struct Nodo Nodo;
