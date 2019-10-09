@@ -4,7 +4,7 @@ void inicializar_descritor_matriz(DescritorMatriz **desc) {
     *desc = (DescritorMatriz *)alloc_memory(sizeof(DescritorMatriz));
     (*desc)->coluna = 0;
     (*desc)->linha = 0;
-    (*desc)->tamanho_linha = -1;
+    (*desc)->tamanho_linha = 0;
     (*desc)->matriz = NULL;
 }
 

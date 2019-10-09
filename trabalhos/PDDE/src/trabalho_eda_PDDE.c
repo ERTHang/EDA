@@ -15,7 +15,7 @@ int main() {
             break;
         }
         if (character == '\n') {
-            if (descritor_matriz->tamanho_linha == -1) {
+            if (descritor_matriz->tamanho_linha == 0) {
                 descritor_matriz->tamanho_linha = descritor_matriz->coluna;
             }
         } else {
