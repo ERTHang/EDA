@@ -1,6 +1,6 @@
 Matéria EDA.
 
-- [ ] Trabalhos
-    - [ ] PDDE
+- [x] Trabalhos
+    - [x] PDDE
         - [x] Matriz Alocada e Valorada
-        - [ ] Sistema de busca de Objetos
+        - [x] Sistema de busca de Objetos
