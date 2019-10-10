@@ -3,24 +3,18 @@
 int main() {
     FILE *arquivo_saida;
     FILE *arquivo_entrada;
-    arquivo_entrada = fopen(ARQUIVO_ENTRADA, "r");
     DescritorMatriz *descritor_matriz;
     size_t label = 0;
     size_t size = 0;
     Coordenadas mass_center;
     inicializar_descritor_matriz(&descritor_matriz);
     char character;
+    arquivo_entrada = fopen(ARQUIVO_ENTRADA, "r");
     while (1) {
         if (fscanf(arquivo_entrada, "%c", &character) == EOF) {
             break;
         }
-        if (character == '\n') {
-            if (descritor_matriz->tamanho_linha == 0) {
-                descritor_matriz->tamanho_linha = descritor_matriz->coluna;
-            }
-        } else {
-            adiciona_matriz(descritor_matriz, (size_t)(character - '0'));
-        }
+        adiciona_matriz(descritor_matriz, character);
     }
     fclose(arquivo_entrada);
     wrap_with_zeros(descritor_matriz);
@@ -30,6 +24,7 @@ int main() {
     if (label) {
         arquivo_saida = fopen(ARQUIVO_SAIDA, "w+");
         write_object_to_file(arquivo_saida, *descritor_matriz, label);
+        fclose(arquivo_saida);
     }
     return 0;
 }
@@ -108,6 +103,8 @@ void object_size(DescritorMatriz *descritor_matriz, size_t x, size_t y, size_t *
             }
         }
     }
+    free(coordenadas_atuais);
+    free_pilha(descritor_pilha);
 }
 
 void marcar_matriz_e_caminho(DescritorPilha *descritor_pilha, DescritorMatriz *descritor_matriz,

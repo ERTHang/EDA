@@ -12,10 +12,12 @@ typedef struct DescritorMatriz {
 } DescritorMatriz;
 
 void inicializar_descritor_matriz(DescritorMatriz **);
-void adiciona_matriz(DescritorMatriz *, size_t);
+void adiciona_matriz(DescritorMatriz *, char);
 void adiciona_linha(DescritorMatriz *);
 void print_matriz_desc(DescritorMatriz);
 void print_matriz(size_t **, size_t, size_t);
 void wrap_with_zeros(DescritorMatriz *);
+void free_matriz(DescritorMatriz*);
+void reset_matriz(DescritorMatriz*);
 
 #endif
